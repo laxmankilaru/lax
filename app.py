@@ -1,3 +1,17 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import joblib
+import pandas as pd
+
+app = Flask(__name__)
+CORS(app)
+
+pipe = joblib.load("model.pkl")
+
+@app.route("/")
+def home():
+    return jsonify({"message": "IPL API is running ✅"})
+
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
@@ -13,7 +27,6 @@ def predict():
             "crr": data["crr"],
             "rrr": data["rrr"]
         }])
-
         prediction = pipe.predict_proba(input_df)
         return jsonify({
             "lose": round(prediction[0][0] * 100, 2),
