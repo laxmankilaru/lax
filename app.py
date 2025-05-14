@@ -16,6 +16,8 @@ def home():
 def predict():
     try:
         data = request.json
+        print("📥 Incoming data:", data)
+
         input_df = pd.DataFrame([{
             "batting_team": data["batting_team"],
             "bowling_team": data["bowling_team"],
@@ -27,10 +29,14 @@ def predict():
             "crr": data["crr"],
             "rrr": data["rrr"]
         }])
+        print("🧾 Input DataFrame:", input_df)
+
         prediction = pipe.predict_proba(input_df)
         return jsonify({
             "lose": round(prediction[0][0] * 100, 2),
             "win": round(prediction[0][1] * 100, 2)
         })
     except Exception as e:
+        print("❌ Prediction Error:", str(e))
         return jsonify({"error": str(e)}), 400
+
